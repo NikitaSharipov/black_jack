@@ -4,11 +4,12 @@ class Player
 
   @@points = {ace: 0, king: 10, queen: 10, jack: 10, ten: 10, nine: 9, eight: 8, seven: 7, six: 6, five: 5, four: 4, three: 3, two: 2}
 
+  @@suit_to_string = {heart: '<3', diamond: '<>', club: '+', spade: '^'}
+  @@value_to_string = {ace: 'T', king: 'K', queen: 'Q', jack: 'J', ten: '10', nine: '9', eight: '8', seven: '7', six: '6', five: '5', four: '4', three: '3', two: '2'}
+
   def initialize (name)
     @name = name
     @money = 100
-    get_2cards
-    @points = 0
   end
 
   def how_many_ace
@@ -33,7 +34,7 @@ class Player
   end
 
   def points_count
-
+    @points = 0
     @cards.each do |card|
       @points += @@points[card.value]
     end
@@ -53,9 +54,14 @@ class Player
         @points = @points + 1
       end
     end 
-
     @points
-    
+  end
+
+  def card_to_string
+    @cards.each do |card|
+      print @@value_to_string[card.value]
+      puts @@suit_to_string[card.suit]
+    end
   end
 
 end
