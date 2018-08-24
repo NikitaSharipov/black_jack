@@ -4,22 +4,22 @@ require_relative 'dealer.rb'
 require_relative 'card.rb'
 
 # Проверка очков дилера и игрока
-def much_points_dealer? (dealer)
-  dealer.points_count > 21
-end
-
-def much_points_player? (player)
-  player.points_count > 21
-end
+# def much_points_dealer? (dealer)
+#   dealer.points_count > 21
+# end
+#
+# def much_points_player? (player)
+#   player.points_count > 21
+# end
 
 # Метод подсчета очков и вывода на экран
 def result_count(player, dealer)
   puts 'Карты Дилера'
-  dealer.card_to_string
-  if  (player.points_count > dealer.points_count && player.points_count < 22) || much_points_dealer?(dealer)
+  card_to_string(dealer)
+  if (player.points_count > dealer.points_count && player.points_count < 22) || dealer.points_count > 21
     puts 'Вы победили, 20$ переходят к вам'
     player.money += 20
-  elsif player.points_count == dealer.points_count || (much_points_player?(player) && much_points_dealer?(dealer))
+  elsif player.points_count == dealer.points_count || player.points_count > 21 && dealer.points_count > 21
     puts 'Ничья, деньги возвращаются их владельцам'
     player.money += 10
     dealer.money += 10
@@ -39,36 +39,14 @@ def dealer_turn(dealer)
     end
 end
 
-# Начало
-
-puts 'Введите имя'
-input_name = gets.chomp
-
-player = Player.new(input_name)
-dealer = Dealer.new
-
-# rubocop:disable Metrics/BlockLength
-
-loop do
-  puts "У вас #{player.money} $"
-  puts "У дилера #{dealer.money} $"
-
-  player.take_2cards
-  dealer.take_2cards
-  puts 'Ваши карты:'
-  player.card_to_string
-  puts 'Ваши очки:'
-  puts player.points_count
-
-  puts 'Карты Дилера'
-  puts '**'
-  puts '**'
-
-  puts 'Дилер и игрок делают ставки по 10$'
-
+# Изьятие ставок
+def bet(player, dealer)
   player.money -= 10
   dealer.money -= 10
+end
 
+# Обработка хода пользователя
+def player_turn(player, dealer)
   loop do
     puts 'Ваш ход, выбирете вариант:'
 
@@ -79,14 +57,14 @@ loop do
     input_loop2 = gets.to_i
 
     if input_loop2 == 1
-      dealer_turn(dealer)
+      dealer_turn(dealer) 
     end
 
     if input_loop2 == 2
       if player.cards.length < 3
         player.take_one_more_card
         puts 'Ваши новые карты:'
-        player.card_to_string
+        card_to_string(player)
         puts 'Ваши очки:'
         puts player.points_count
       else
@@ -106,6 +84,44 @@ loop do
 
     break if input_loop2 == 3
   end
+end
+
+# Вывод карт
+def card_to_string(black_jack)
+  black_jack.cards.each do |card|
+    print black_jack.value_to_string[card.value]
+    puts black_jack.suit_to_string[card.suit]
+  end
+end
+
+# Начало
+
+puts 'Введите имя'
+input_name = gets.chomp
+
+player = Player.new(input_name)
+dealer = Dealer.new
+
+loop do
+  puts "У вас #{player.money} $"
+  puts "У дилера #{dealer.money} $"
+
+  player.take_2cards
+  dealer.take_2cards
+  puts 'Ваши карты:'
+  card_to_string(player)
+  puts 'Ваши очки:'
+  puts player.points_count
+
+  puts 'Карты Дилера'
+  puts '**'
+  puts '**'
+
+  puts 'Дилер и игрок делают ставки по 10$'
+
+  bet(player, dealer)
+
+  player_turn(player, dealer)
 
   puts 'Хотите сыграть еще?'
   puts '0. Нет, закончим игру!'
@@ -117,10 +133,3 @@ loop do
 end
 
 # rubocop:enable Metrics/BlockLength
-
-def l
-  puts much_points_dealer?(20)
-  puts much_points_player?(22)
-end
-
-l

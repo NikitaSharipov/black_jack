@@ -1,30 +1,20 @@
 class BlackJack
   attr_accessor :money
-  attr_reader :cards, :points
-
-  @@points = { ace: 0, king: 10, queen: 10, jack: 10, ten: 10, nine: 9, eight: 8, seven: 7, six: 6, five: 5, four: 4, three: 3, two: 2 }
-
-  @@suit_to_string = { heart: '<3', diamond: '<>', club: '+', spade: '^' }
-  @@value_to_string = { ace: 'T', king: 'K', queen: 'Q', jack: 'J', ten: '10', nine: '9', eight: '8', seven: '7', six: '6', five: '5', four: '4', three: '3', two: '2' }
+  attr_reader :cards, :points, :value_to_string, :suit_to_string
 
   def initialize
     @money = 100
+    @card_points = { ace: 0, king: 10, queen: 10, jack: 10, ten: 10, nine: 9, eight: 8, seven: 7, six: 6, five: 5, four: 4, three: 3, two: 2 }
+    @suit_to_string = { heart: '<3', diamond: '<>', club: '+', spade: '^' }
+    @value_to_string = { ace: 'T', king: 'K', queen: 'Q', jack: 'J', ten: '10', nine: '9', eight: '8', seven: '7', six: '6', five: '5', four: '4', three: '3', two: '2' }
   end
 
   def how_many_ace
-    ace_count = 0
-    @cards.each do |card|
-      ace_count += 1 if card.value == :ace
-    end
-    ace_count
+    @cards.select { |card| card.value == :ace }.count
   end
 
   def take_2cards
-    card1 = Card.new
-    card2 = Card.new
-    @cards = []
-    @cards << card1
-    @cards << card2
+    @cards = [Card.new, Card.new]
   end
 
   def take_one_more_card
@@ -35,7 +25,7 @@ class BlackJack
   def points_count
     @points = 0
     @cards.each do |card|
-      @points += @@points[card.value]
+      @points += @card_points[card.value]
     end
 
     if how_many_ace == 3
@@ -54,12 +44,5 @@ class BlackJack
                 end
     end
     @points
-  end
-
-  def card_to_string
-    @cards.each do |card|
-      print @@value_to_string[card.value]
-      puts @@suit_to_string[card.suit]
-    end
   end
 end
