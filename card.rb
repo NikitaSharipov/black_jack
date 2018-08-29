@@ -1,11 +1,11 @@
 class Card
   attr_accessor :value, :suit
 
-  @@suit = %i[heart diamond club spade]
-  @@value = %i[ace king queen jack ten nine eight seven six five four three two]
-
-  def initialize
-    @value = @@value.sample
-    @suit = @@suit.sample
+  def initialize(deck_exempl)
+    deck_exempl.deck.sample.each do |inner_hash|
+      @suit ||= inner_hash[:suit]
+      @value ||= inner_hash[:value] 
+    end
+    deck_exempl.cart_remove([{suit: @suit},{value: @value}])
   end
 end

@@ -1,8 +1,8 @@
-require_relative 'black_jack.rb'
-require_relative 'player.rb'
 require_relative 'dealer.rb'
+require_relative 'player.rb'
 require_relative 'card.rb'
 require_relative 'text_interface.rb'
+require_relative 'deck.rb'
 
 class Game
   def initialize
@@ -16,11 +16,13 @@ class Game
     player = Player.new(input_name)
     dealer = Dealer.new
 
+    game_deck = Deck.new
+
     loop do
       interface.how_much_money(player, dealer)
 
-      player.take_2cards
-      dealer.take_2cards
+      player.take_2cards(game_deck)
+      dealer.take_2cards(game_deck)
 
       interface.your_cards(player)
 
@@ -32,11 +34,13 @@ class Game
 
       bet(player, dealer)
 
-      player_turn(player, dealer, interface)
+      player_turn(player, dealer, interface, game_deck)
 
       input = interface.text_end_menu
 
       break if input.zero?
+
+      game_deck.deck_change
     end
   end
 
@@ -57,8 +61,8 @@ class Game
   end
 
   # Ход дилера
-  def dealer_turn(dealer, interface)
-    dealer.take_one_more_card if dealer.points_count < 17 && dealer.cards.length < 3
+  def dealer_turn(dealer, interface, game_deck)
+    dealer.take_one_more_card(game_deck) if dealer.points_count < 17 && dealer.cards.length < 3
     interface.dealer_turn_text(dealer)
   end
 
@@ -69,24 +73,24 @@ class Game
   end
 
   # Обработка хода пользователя
-  def player_turn(player, dealer, interface)
+  def player_turn(player, dealer, interface, game_deck)
     loop do
       input_loop2 = interface.player_turn_text
 
       if input_loop2 == 1
-        dealer_turn(dealer, interface)
+        dealer_turn(dealer, interface, game_deck)
       end
 
       if input_loop2 == 2
         if player.cards.length < 3
-          player.take_one_more_card
+          player.take_one_more_card(game_deck)
           interface.your_cards(player)
           interface.your_points(player)
         else
           interface.count_warning
         end
 
-        dealer_turn(dealer, interface)
+        dealer_turn(dealer, interface, game_deck)
 
       end
 
