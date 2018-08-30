@@ -13,13 +13,20 @@ class Deck
     @deck = []
     @suits.each do |suit|
       @values.each do |value|
-        @deck << [{suit: suit}, {value: value}]
+#        @deck << [{suit: suit}, {value: value}]
+        @deck << Card.new(suit,value)
       end
     end
   end
 
   def cart_remove(card)
     @deck.delete(card)
+  end
+
+  def take_cart_from_deck
+    card = @deck.sample 
+    cart_remove(card)
+    return card
   end
 
 end

@@ -14,12 +14,11 @@ class Dealer
   end
 
   def take_2cards(player_deck)
-    @cards = [Card.new(player_deck), Card.new(player_deck)]
+    @cards = [player_deck.take_cart_from_deck, player_deck.take_cart_from_deck]
   end
 
   def take_one_more_card(player_deck)
-    card3 = Card.new(player_deck)
-    @cards << card3
+    @cards << player_deck.take_cart_from_deck
   end
 
   def points_count
