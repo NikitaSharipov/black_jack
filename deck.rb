@@ -13,7 +13,6 @@ class Deck
     @deck = []
     @suits.each do |suit|
       @values.each do |value|
-#        @deck << [{suit: suit}, {value: value}]
         @deck << Card.new(suit,value)
       end
     end

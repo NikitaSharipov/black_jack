@@ -1,8 +1,9 @@
-require_relative 'dealer.rb'
 require_relative 'player.rb'
+require_relative 'card_deal.rb'
 require_relative 'card.rb'
 require_relative 'text_interface.rb'
 require_relative 'deck.rb'
+require_relative 'text_card_deal_interface.rb'
 
 class Game
   def initialize
@@ -11,30 +12,31 @@ class Game
 
   def main_game
     interface = TextInterface.new
+    interface_card_deal = TextCardDealInterface.new
     input_name = interface.name_text
 
     player = Player.new(input_name)
-    dealer = Dealer.new
+    dealer = Player.new('Dealer')
 
     game_deck = Deck.new
 
     loop do
-      interface.how_much_money(player, dealer)
-
-      player.take_2cards(game_deck)
-      dealer.take_2cards(game_deck)
-
-      interface.your_cards(player)
-
-      interface.your_points(player)
-
-      interface.hidden_dealer_card
+      interface.how_much_money(player.money, dealer.money)
+      card_deal = CardDeal.new
 
       interface.text_bet
 
       bet(player, dealer)
 
-      player_turn(player, dealer, interface, game_deck)
+      card_deal.round(game_deck, interface_card_deal)
+
+      give_prize(card_deal.winner, player, dealer)
+
+#      player.take_2cards(game_deck)
+#      dealer.take_2cards(game_deck)
+#      interface.your_cards(player.card_to_interface)
+#      interface.your_points(player.points_count)
+#      interface.hidden_dealer_card
 
       input = interface.text_end_menu
 
@@ -44,6 +46,7 @@ class Game
     end
   end
 
+=begin
   # Метод подсчета очков и вывода на экран
   def result_count(player, dealer, interface)
     if (player.points_count > dealer.points_count && player.points_count < 22) || dealer.points_count > 21
@@ -57,14 +60,16 @@ class Game
       dealer.money += 20
       winner = 'dealer'
     end
-    interface.point_count_text(winner, dealer)
+    interface.point_count_text(winner, dealer.card_to_interface)
   end
+  =end
 
   # Ход дилера
-  def dealer_turn(dealer, interface, game_deck)
-    dealer.take_one_more_card(game_deck) if dealer.points_count < 17 && dealer.cards.length < 3
-    interface.dealer_turn_text(dealer)
-  end
+#  def dealer_turn(dealer, interface, game_deck)
+#    dealer.take_one_more_card(game_deck) if dealer.points_count < 17 && dealer.cards.length < 3
+#    interface.dealer_turn_text(dealer.cards)
+#  end
+=end
 
   # Изьятие ставок
   def bet(player, dealer)
@@ -72,6 +77,18 @@ class Game
     dealer.money -= 10
   end
 
+  def give_prize(winner, player, dealer)
+    if winner == 'player'
+      player.money += 20
+    elsif winner == 'draw'
+      player.money += 10
+      dealer.money += 10
+    elsif winner ==  'dealer'
+      dealer.money += 20 
+    end
+  end
+
+=begin
   # Обработка хода пользователя
   def player_turn(player, dealer, interface, game_deck)
     loop do
@@ -84,7 +101,7 @@ class Game
       if input_loop2 == 2
         if player.cards.length < 3
           player.take_one_more_card(game_deck)
-          interface.your_cards(player)
+          interface.your_cards(player.card_to_interface)
           interface.your_points(player)
         else
           interface.count_warning
@@ -104,4 +121,5 @@ class Game
       break if input_loop2 == 3
     end
   end
+=end
 end
