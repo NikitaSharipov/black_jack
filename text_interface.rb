@@ -1,5 +1,4 @@
 class TextInterface
-
   def name_text
     puts 'Введите имя'
     input_name = gets.chomp
@@ -9,7 +8,6 @@ class TextInterface
     puts "У вас #{player_money} $"
     puts "У дилера #{dealer_money} $"
   end
-
 
   def text_bet
     puts 'Дилер и игрок делают ставки по 10$'
@@ -26,4 +24,13 @@ class TextInterface
     end
   end
 
+  def point_count_text(winner)
+    if winner == 'player'
+      puts 'Вы победили, 20$ переходят к вам'
+    elsif winner == 'dealer'
+      puts 'Вы проиграли, 20$, уходят дилеру'
+    elsif winner == 'draw'
+      puts 'Ничья, деньги возвращаются их владельцам'
+    end
+  end
 end

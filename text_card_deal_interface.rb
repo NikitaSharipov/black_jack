@@ -20,16 +20,9 @@ class TextCardDealInterface
     puts '**'
   end
 
-  def point_count_text(winner, dealer_cards)
+  def dealer_cards_text(dealer_cards)
     puts 'Карты Дилера'
     card_to_string(dealer_cards)
-    if winner == 'player'
-      puts 'Вы победили, 20$ переходят к вам'
-    elsif winner == 'dealer'
-      puts 'Вы проиграли, 20$, уходят дилеру'
-    elsif winner == 'draw'
-      puts 'Ничья, деньги возвращаются их владельцам'
-    end
   end
 
   def dealer_turn_text(dealer_cards)
@@ -57,9 +50,9 @@ class TextCardDealInterface
   end
 
   def card_to_string(card_hash)
-    card_hash.each do |key, value|
-      print key
-      puts value
+    card_hash.each do |card|
+      card.each { |value| print value }
+      puts
     end
   end
 

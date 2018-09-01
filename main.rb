@@ -6,4 +6,3 @@ require_relative 'text_card_deal_interface.rb'
 require_relative 'game.rb'
 
 game = Game.new
-
