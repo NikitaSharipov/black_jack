@@ -25,8 +25,8 @@ class TextCardDealInterface
     card_to_string(dealer_cards)
   end
 
-  def dealer_turn_text(dealer_cards)
-    if dealer_cards.length == 3
+  def dealer_turn_text(take)
+    if take
       puts 'Дилер взял еще 1 карту'
     else
       puts 'Дилер пропускает ход'
@@ -39,8 +39,15 @@ class TextCardDealInterface
       puts '1. Пропустить ход'
       puts '2. Добавить карту'
       puts '3. Открыть карты'
-      input_loop2 = gets.to_i
-      return input_loop2 if input_loop2.between?(1, 3)
+      input_loop = gets.to_i
+      if input_loop == 1
+        decision = :wait
+      elsif input_loop == 2
+        decision = :take_card
+      elsif input_loop == 3
+        decision = :open_card
+      end
+      return decision if input_loop.between?(1, 3)
       puts 'Введены неверные данные'
     end
   end

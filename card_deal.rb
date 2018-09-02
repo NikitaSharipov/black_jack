@@ -1,13 +1,13 @@
 class CardDeal
   attr_reader :winner, :bank
 
-  def initialize(deck, interface, bank)
+  def initialize(interface, bank)
     @card_points = { ace: 0, king: 10, queen: 10, jack: 10, ten: 10, nine: 9, eight: 8, seven: 7, six: 6, five: 5, four: 4, three: 3, two: 2 }
     @suit_to_string = { heart: '<3', diamond: '<>', club: '+', spade: '^' }
     @value_to_string = { ace: 'T', king: 'K', queen: 'Q', jack: 'J', ten: '10', nine: '9', eight: '8', seven: '7', six: '6', five: '5', four: '4', three: '3', two: '2' }
     @player_cards = []
     @dealer_cards = []
-    @deck = deck
+    @deck = Deck.new
     @interface = interface
     @bank = bank
   end
@@ -29,7 +29,7 @@ class CardDeal
 
   attr_writer :winner
   attr_reader :cards, :value_to_string, :suit_to_string
-  attr_accessor :player_cards, :dealer_cards, :deck, :interface
+  attr_accessor :player_cards, :dealer_cards, :deck, :interface, :dealer_points, :player_points
 
   def how_many_ace(cards)
     cards.select { |card| card.value == :ace }.count
@@ -68,52 +68,62 @@ class CardDeal
   end
 
   def dealer_turn
-    @dealer_cards << @deck.sample_card if points_count(@dealer_cards) < 17 && @dealer_cards.length < 3
-    @interface.dealer_turn_text(@dealer_cards)
+    take = false
+    if points_count(@dealer_cards) < 17 && @dealer_cards.length < 3
+      @dealer_cards << @deck.sample_card
+      take = true
+    end
+    @interface.dealer_turn_text(take)
+  end
+
+  def player_turn
+    if @player_cards.length < 3
+      @player_cards << @deck.sample_card
+      @interface.your_cards(card_to_interface(@player_cards))
+      @interface.your_points(points_count(@player_cards))
+    else
+      @interface.count_warning
+    end
   end
 
   # Обработка хода пользователя
   def turn
     loop do
-      input_loop2 = @interface.player_turn_text
+      decision = @interface.player_turn_text
 
-      case input_loop2
+      case decision
 
-      when 1
+      when :wait
         dealer_turn
 
-      when 2
-        if @player_cards.length < 3
-          @player_cards << @deck.sample_card
-          @interface.your_cards(card_to_interface(@player_cards))
-          @interface.your_points(points_count(@player_cards))
-        else
-          @interface.count_warning
-        end
+      when :take_card
+        player_turn
         dealer_turn
 
-      when 3
+      when :open_card
         result_count
-
       end
 
       if @dealer_cards.length == 3 && @player_cards.length == 3
-        input_loop2 = 3
+        decision = :open_card
         result_count
       end
 
-      break if input_loop2 == 3
+      break if decision == :open_card
     end
   end
 
   def result_count
-    if (points_count(player_cards) > points_count(dealer_cards) && points_count(player_cards) < 22) || points_count(dealer_cards) > 21
-      @winner = 'player'
-    elsif points_count(player_cards) == points_count(dealer_cards) || points_count(player_cards) > 21 && points_count(dealer_cards) > 21
-      @winner = 'draw'
-    else
-      @winner = 'dealer'
-    end
+    @player_points = points_count(player_cards)
+    @dealer_points = points_count(dealer_cards)
+
+    @winner = if (@player_points > @dealer_points && @player_points < 22) || @dealer_points > 21
+                'player'
+              elsif @player_points == @dealer_points || @player_points > 21 && @dealer_points > 21
+                'draw'
+              else
+                'dealer'
+              end
     @interface.dealer_cards_text(card_to_interface(dealer_cards))
   end
 end

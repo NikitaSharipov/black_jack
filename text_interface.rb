@@ -9,8 +9,8 @@ class TextInterface
     puts "У дилера #{dealer_money} $"
   end
 
-  def text_bet
-    puts 'Дилер и игрок делают ставки по 10$'
+  def text_bet(bank)
+    puts "Дилер и игрок делают ставки по #{bank / 2}"
   end
 
   def text_end_menu
@@ -24,11 +24,11 @@ class TextInterface
     end
   end
 
-  def point_count_text(winner)
+  def point_count_text(winner, bank)
     if winner == 'player'
-      puts 'Вы победили, 20$ переходят к вам'
+      puts "Вы победили, #{bank}$ переходят к вам"
     elsif winner == 'dealer'
-      puts 'Вы проиграли, 20$, уходят дилеру'
+      puts "Вы проиграли, #{bank}$, уходят дилеру"
     elsif winner == 'draw'
       puts 'Ничья, деньги возвращаются их владельцам'
     end

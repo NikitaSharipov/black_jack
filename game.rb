@@ -19,18 +19,19 @@ class Game
     dealer = Player.new('Dealer')
 
     loop do
-      game_deck = Deck.new
       interface.how_much_money(player.money, dealer.money)
-
-      interface.text_bet
 
       bank = bet(player, dealer, 10)
 
-      card_deal = CardDeal.new(game_deck, interface_card_deal, bank)
+      break if bank.nil?
+
+      interface.text_bet(bank)
+
+      card_deal = CardDeal.new(interface_card_deal, bank)
 
       card_deal.round
 
-      interface.point_count_text(card_deal.winner)
+      interface.point_count_text(card_deal.winner, bank)
 
       give_prize(card_deal.winner, player, dealer, card_deal.bank)
 
@@ -42,9 +43,18 @@ class Game
 
   # Изьятие ставок
   def bet(player, dealer, rate)
-    player.money -= rate
-    dealer.money -= rate
-    bank = 2 * rate
+    if proceed?(player, dealer)
+      player.money -= rate
+      dealer.money -= rate
+      bank = 2 * rate
+    else
+      puts 'Игра не может быть продолжена, один из участников не может сделать ставку'
+    end
+  end
+
+  def proceed?(player, dealer)
+    return false if player.money == 0 || dealer.money == 0
+    true
   end
 
   def give_prize(winner, player, dealer, bank)
