@@ -1,10 +1,11 @@
-class CardDeal
+class Round
   attr_reader :winner, :bank
 
+  CARDPOINTS = { ace: 0, king: 10, queen: 10, jack: 10, ten: 10, nine: 9, eight: 8, seven: 7, six: 6, five: 5, four: 4, three: 3, two: 2 }
+  SUITTOSTRING = { heart: '<3', diamond: '<>', club: '+', spade: '^' }
+  VALUETOSTRING = { ace: 'T', king: 'K', queen: 'Q', jack: 'J', ten: '10', nine: '9', eight: '8', seven: '7', six: '6', five: '5', four: '4', three: '3', two: '2' }
+
   def initialize(interface, bank)
-    @card_points = { ace: 0, king: 10, queen: 10, jack: 10, ten: 10, nine: 9, eight: 8, seven: 7, six: 6, five: 5, four: 4, three: 3, two: 2 }
-    @suit_to_string = { heart: '<3', diamond: '<>', club: '+', spade: '^' }
-    @value_to_string = { ace: 'T', king: 'K', queen: 'Q', jack: 'J', ten: '10', nine: '9', eight: '8', seven: '7', six: '6', five: '5', four: '4', three: '3', two: '2' }
     @player_cards = []
     @dealer_cards = []
     @deck = Deck.new
@@ -38,7 +39,7 @@ class CardDeal
   def points_count(cards)
     points = 0
     cards.each do |card|
-      points += @card_points[card.value]
+      points += CARDPOINTS[card.value]
     end
 
     if how_many_ace(cards) == 3
@@ -62,7 +63,7 @@ class CardDeal
   def card_to_interface(cards)
     text_card = []
     cards.each do |card|
-      text_card << [@value_to_string[card.value], @suit_to_string[card.suit]]
+      text_card << [VALUETOSTRING[card.value], SUITTOSTRING[card.suit]]
     end
     text_card
   end
@@ -117,7 +118,7 @@ class CardDeal
     @player_points = points_count(player_cards)
     @dealer_points = points_count(dealer_cards)
 
-    @winner = if (@player_points > @dealer_points && @player_points < 22) || @dealer_points > 21
+    @winner = if (@player_points > @dealer_points && @player_points < 22) || (@player_points < 22 && @dealer_points > 21)
                 'player'
               elsif @player_points == @dealer_points || @player_points > 21 && @dealer_points > 21
                 'draw'

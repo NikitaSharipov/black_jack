@@ -1,10 +1,3 @@
-require_relative 'player.rb'
-require_relative 'card_deal.rb'
-require_relative 'card.rb'
-require_relative 'text_interface.rb'
-require_relative 'deck.rb'
-require_relative 'text_card_deal_interface.rb'
-
 class Game
   def initialize
     main_game
@@ -12,7 +5,7 @@ class Game
 
   def main_game
     interface = TextInterface.new
-    interface_card_deal = TextCardDealInterface.new
+    interface_card_deal = RoundInterface.new
     input_name = interface.name_text
 
     player = Player.new(input_name)
@@ -27,7 +20,7 @@ class Game
 
       interface.text_bet(bank)
 
-      card_deal = CardDeal.new(interface_card_deal, bank)
+      card_deal = Round.new(interface_card_deal, bank)
 
       card_deal.round
 
